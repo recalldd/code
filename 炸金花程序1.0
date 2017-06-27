@@ -1,0 +1,384 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+void Showcard_0();
+void Showcard_1();
+int rands(char Pycard[][2], char Comcard[][2]);
+void Showcard_2(char Pycard[][2]);
+void Showcard_3(char Pycard[][2], char Comcard[][2]);
+void Getvalue(char card[][2]);
+int Sentense(char card[][2]);
+int Compare(char Pycard[3][2],char Comcard[3][2]);
+int Pyscore=100;////////玩家的总积分，全局变量
+int Comscore=100;///////庄家的总积分，全局变量
+int main()
+{
+	char Pycard[3][2];//////////////////////////XXcard[i][0]代表牌的大小，XXcard[i][1]代表牌的花色。
+	char Comcard[3][2];
+	int i, j;
+	int start;
+	int end=0;
+	int k=1;////////////////k为0、1、2时代表玩家赢，玩家输，平局.
+	int	Fscore=1, Tscore=1;/////////////////分别为第一次和第二次下注积分
+	Showcard_0();
+	scanf("%c", &start);
+	do
+	{
+		Showcard_1();
+		do
+		{
+			scanf("%d", &Fscore);
+			if(Fscore<1 || Fscore>10)
+			{
+				printf("输入出错，请重新输入:");
+			}	
+		}while(Fscore<1 || Fscore>10);
+		rands(Pycard, Comcard);
+		k=Compare(Pycard, Comcard);
+		Pyscore=Pyscore-Fscore;
+		Comscore=Comscore-Fscore;
+		Showcard_2(Pycard);
+		do
+		{
+			scanf("%d", &Tscore);
+			if(Tscore<0 || Tscore>10)
+			{
+				printf("输入出错，请重新输入:");
+			}
+		}while(Tscore<0 || Tscore>10);
+		Pyscore=Pyscore-Tscore;
+		Comscore=Comscore-Tscore;
+		Showcard_3(Pycard, Comcard);
+		if(k ==1)
+		{
+			system("cls");
+			printf("\n\n\n                   ******************您赢了！******************\n");
+			Pyscore=Pyscore+(Fscore+Tscore)*2;
+		}
+		else
+		{
+			system("cls");
+			printf("\n\n\n                   ******************庄家赢了******************\n");
+			Comscore=Comscore+(Fscore+Tscore)*2;
+		}
+		printf("庄家积分为：%d\n玩家积分为%d\n", Comscore, Pyscore);
+		printf("是否继续游戏(1/0)：");
+		scanf("%d", &end);
+		system("cls");
+		if(Pyscore <= 0)
+		{
+			printf("游戏结束，您的积分不足！");
+			end=0;
+		}
+		else if(Comscore <= 0)
+		{
+			printf("游戏结束，庄家的积分不足！");
+			end=0;
+		}
+	}while(end == 1);
+		
+	return 0;
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////                         产生随机牌面                    //////////////////////////////////                   
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+int rands(char Pycard[][2], char Comcard[][2])
+{
+	int a;
+	int b;
+	int i, j;
+	int Nunmber[10];
+	srand((unsigned)time(NULL));
+	for(i=0; i<6; i++)
+	{
+		Nunmber[i]=rand()%52+8;
+		if(i>0)////////////////////////////////////////////////排除重复的数字
+		{
+			for(j=i-1; j >= 0; j--)
+			{
+				if(Nunmber[i] == Nunmber[j])	
+				{
+					i=i-1;
+				}
+			}
+		}
+		a=Nunmber[i]/4;
+		b=Nunmber[i]%4;
+		if(i<3)
+		{
+			Pycard[i][0]=a;
+			Pycard[i][1]=b;
+		}
+		else 
+		{
+			Comcard[i-3][0]=a;
+			Comcard[i-3][1]=b;
+		}
+	}
+	return 0;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////                                 显示牌                            //////////////////////////                                                         
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void Showcard_0()
+{
+	printf("                 *****************炸金花*****************\n");
+	printf("\n\n\n\n 请问是否发牌(1/0)：");
+}
+void Showcard_1()
+{
+	system("cls");
+	printf("庄家积分:%d                                                      玩家积分:%d\n",Comscore, Pyscore);
+	printf("------------------------------------------------------------------------------\n");
+	printf("庄家                                                                  玩家\n\n");
+	printf("   *********                                                 *********\n");
+	printf("   *********                                                 *********\n");
+	printf("   *********                                                 *********\n");
+	printf("   *********                                                 *********\n");
+	printf("   *********                                                 *********\n");
+	printf("   *********                                                 *********\n");
+	printf("   *********                                                 *********\n\n");
+	printf("   *********                                                 *********\n");
+	printf("   *********                                                 *********\n");
+	printf("   *********                                                 *********\n");
+	printf("   *********                                                 *********\n");
+	printf("   *********                                                 *********\n");
+	printf("   *********                                                 *********\n");
+	printf("   *********                                                 *********\n\n");
+	printf("   *********                                                 *********\n");
+	printf("   *********                                                 *********\n");
+	printf("   *********                                                 *********\n");
+	printf("   *********                                                 *********\n");
+	printf("   *********                                                 *********\n");
+	printf("   *********                                                 *********\n");
+	printf("   *********                                                 *********\n\n");
+	printf("请输入下注积分(1~10):");
+}
+char Cp_Pycard[3][2];/////////////复制Pycard数组和Comcard数组的全局变量
+char Cp_Comcard[3][2];////////////
+void Showcard_2(char Pycard[][2])
+{
+	int i;
+	system("cls");
+	for(i=0; i<3; i++)
+	{
+		Cp_Pycard[i][0]=Pycard[i][0];
+        Cp_Pycard[i][1]=Pycard[i][1];
+	}
+	Getvalue(Cp_Pycard);
+	printf("庄家积分:%d                                                      玩家积分:%d\n",Comscore, Pyscore);
+	printf("------------------------------------------------------------------------------\n");
+	printf("庄家                                                                  玩家\n\n");
+	printf("   *********                                                 *********\n");
+	if(Cp_Pycard[0][0] <14)
+	printf("   *********                                                 *   %c%2d*\n", Cp_Pycard[0][1]+3, Cp_Pycard[0][0]);
+	else printf("   *********                                                 *   %c%2c*\n", Cp_Pycard[0][1]+3, Cp_Pycard[0][0]);
+	printf("   *********                                                 *       *\n");
+	printf("   *********                                                 *       *\n");
+	printf("   *********                                                 *       *\n");
+	printf("   *********                                                 *       *\n");
+	printf("   *********                                                 *********\n\n");
+	printf("   *********                                                 *********\n");
+	if(Cp_Pycard[1][0] <14)
+	printf("   *********                                                 *   %c%2d*\n", Cp_Pycard[1][1]+3, Cp_Pycard[1][0]);
+	else printf("   *********                                                 *   %c%2c*\n", Cp_Pycard[1][1]+3, Cp_Pycard[1][0]);
+	printf("   *********                                                 *       *\n");
+	printf("   *********                                                 *       *\n");
+	printf("   *********                                                 *       *\n");
+	printf("   *********                                                 *       *\n");
+	printf("   *********                                                 *********\n\n");
+	printf("   *********                                                 *********\n");
+	if(Cp_Pycard[2][0] <14)
+	printf("   *********                                                 *   %c%2d*\n", Cp_Pycard[2][1]+3, Cp_Pycard[2][0]);
+	else printf("   *********                                                 *   %c%2c*\n", Cp_Pycard[2][1]+3, Cp_Pycard[2][0]);
+	printf("   *********                                                 *       *\n");
+	printf("   *********                                                 *       *\n");
+	printf("   *********                                                 *       *\n");
+	printf("   *********                                                 *       *\n");
+	printf("   *********                                                 *********\n\n");
+	printf("请再次输入下注积分(0~10):");
+}
+void Showcard_3(char Pycard[][2], char Comcard[][2])
+{
+	int i;
+	system("cls");
+	for(i=0; i<3; i++)
+	{
+		Cp_Comcard[i][0]=Comcard[i][0];
+		Cp_Comcard[i][1]=Comcard[i][1];
+	}
+	Getvalue(Cp_Comcard);
+	printf("庄家积分:%d                                                      玩家积分:%d\n",Comscore, Pyscore);
+	printf("------------------------------------------------------------------------------\n");
+	printf("庄家                                                                  玩家\n\n");
+	printf("   *********                                                 *********\n");
+	if(Cp_Comcard[0][0] <14)
+	printf("   *   %c%2d*", Cp_Comcard[0][1]+3, Cp_Comcard[0][0]);
+	else printf("   *   %c%2c*", Cp_Comcard[0][1]+3, Cp_Comcard[0][0]);
+	if(Cp_Pycard[0][0] <14)
+	printf("                                                 *   %c%2d*\n", Cp_Pycard[0][1]+3, Cp_Pycard[0][0]);
+	else printf("                                                 *   %c%2c*\n", Cp_Pycard[0][1]+3, Cp_Pycard[0][0]);
+	printf("   *       *                                                 *       *\n");
+	printf("   *       *                                                 *       *\n");
+	printf("   *       *                                                 *       *\n");
+	printf("   *       *                                                 *       *\n");
+	printf("   *********                                                 *********\n\n");
+	printf("   *********                                                 *********\n");
+	if(Cp_Comcard[1][0] <14)
+	printf("   *   %c%2d*", Cp_Comcard[1][1]+3, Cp_Comcard[1][0]);
+	else printf("   *   %c%2c*", Cp_Comcard[1][1]+3, Cp_Comcard[1][0]);
+	if(Cp_Pycard[1][0] <14)
+	printf("                                                 *   %c%2d*\n", Cp_Pycard[1][1]+3, Cp_Pycard[1][0]);
+	else printf("                                                 *   %c%2c*\n", Cp_Pycard[1][1]+3, Cp_Pycard[1][0]);
+	printf("   *       *                                                 *       *\n");
+	printf("   *       *                                                 *       *\n");
+	printf("   *       *                                                 *       *\n");
+	printf("   *       *                                                 *       *\n");
+	printf("   *********                                                 *********\n\n");
+	printf("   *********                                                 *********\n");
+	if(Cp_Comcard[2][0] <14)
+	printf("   *   %c%2d*", Cp_Comcard[2][1]+3, Cp_Comcard[2][0]);
+	else printf("   *   %c%2c*", Cp_Comcard[2][1]+3, Cp_Comcard[2][0]);
+	if(Cp_Pycard[2][0] <14)
+	printf("                                                 *   %c%2d*\n", Cp_Pycard[2][1]+3, Cp_Pycard[2][0]);
+	else printf("                                                 *   %c%2c*\n", Cp_Pycard[2][1]+3, Cp_Pycard[2][0]);
+	printf("   *       *                                                 *       *\n");
+	printf("   *       *                                                 *       *\n");
+	printf("   *       *                                                 *       *\n");
+	printf("   *       *                                                 *       *\n");
+	printf("   *********                                                 *********\n\n");
+	system("pause");
+}
+void Getvalue(char card[][2])//////////将A,K,Q,J的ascll码赋予数组
+{
+	int i;
+	for(i=0; i<3; i++)
+	{
+		if(card[i][0] == 11)	card[i][0]+=63;
+		else if(card[i][0] == 12)	card[i][0]+=69;
+		else if(card[i][0] == 13) 	card[i][0]+=62;
+		else if(card[i][0] == 14)	card[i][0]+=51; 
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////                                               比较模块                                         /////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+int Compare(char Pycard[3][2],char Comcard[3][2])
+{
+	int py;
+	int com;
+	int k=1;/////////////////////////////////////k为0、1、2时代表玩家赢，玩家输，平局.
+	int i, j;
+	py=Sentense(Pycard);
+	com=Sentense(Comcard);
+	if(py > com)	k=1;
+	else if(py < com)	k=0;
+	else if(py == com)
+	{
+		if(py == 6)//同时豹子时判断大小
+		{
+			if(Pycard[2][0] > Comcard[2][0])
+				k=1;
+			else k=0;
+		}
+		if(py == 5)//同时同花顺时判断大小
+		{
+			if(Pycard[2][0] > Comcard[2][0])
+				k=1;
+			else k=0;
+		}
+		if(py == 4)//同时同花时判断大小
+		{
+			if(Pycard[2][0] > Comcard[2][0])
+				k=1;
+			else if(Pycard[2][0] == Comcard[2][0])
+			{
+				if(Pycard[1][0] > Comcard[1][0])
+				k=1;
+				else if(Pycard[1][0] == Comcard[1][0])
+				{
+					if(Pycard[0][0] > Comcard[0][0])
+					k=1;
+					else k=0;
+				}
+				else k=0;
+			}
+			else k=0;
+		}
+		if(py == 3)//同时顺子时判断大小
+		{
+			if(Pycard[2][0] > Comcard[2][0])
+				k=1;
+			else k=0;
+		}
+		if(py == 2)
+		{
+			if(Pycard[2][0] > Comcard[2][0])
+				k=1;
+			else if(Pycard[2][0] == Comcard[2][0])
+			{
+				if(Pycard[0][0] > Comcard[0][0])	k=1;
+				else k=0;
+			}
+			else k=0;
+		}
+		if(py ==1)
+		{
+			if(Pycard[2][0] > Comcard[2][0])
+				k=1;
+			else if(Pycard[2][0] == Comcard[2][0])
+			{
+				if(Pycard[1][0] > Comcard[1][0])	k=1;
+				else if(Pycard[1][0] == Comcard[1][0])
+				{
+					if(Pycard[0][0] > Comcard[0][0]) k=1;
+					else k=0;
+				}
+				else k=0;
+			}
+			else k=0;
+		}
+	}
+	return k;
+}
+int Sentense(char card[][2])///////////////////////判断牌组属于那个段
+{
+	int i, j;
+	int temp; 
+	int k=5;
+	for(i=0; i<3; i++)//将数组从小到大排序
+		{
+			for(j=i; j<3; j++)
+			{
+				if(card[i][0] >card[j][0])	
+				{
+					temp=card[i][0];
+					card[i][0]=card[j][0];
+					card[j][0]=temp;
+				} 
+			}
+		}
+	if(card[0][0] == card[1][0] && card[1][0] == card[2][0] && card[0][0] == card[2][0])//豹子
+	{
+		k=6;
+	}
+	else if(card[0][1] == card[1][1] && card[1][1] == card[2][1] && card[0][1] == card[2][1])//同花
+	{
+		if((card[1][0]-card[0][0] ==1 && card[2][0]-card[0][0] == 2)
+			|| (card[1][0]-card[0][0] == 2 && card[2][0]-card[0][0] == 1))//同花顺 
+			{
+				k=5;
+			}
+			else	k=4;
+	}
+	else if((card[1][0]-card[0][0] ==1 && card[2][0]-card[0][0] == 2)
+			|| (card[1][0]-card[0][0] == 2 && card[2][0]-card[0][0] == 1))//顺子 
+			{
+				k=3;
+			}
+	else if(card[0][0] == card[1][0] || card[0][0] == card[2][0] || card[2][0] == card[1][0])//对子 
+		k=2;
+	else	k=1;
+	return k;
+}
